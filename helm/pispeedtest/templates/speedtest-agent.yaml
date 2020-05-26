@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speedtest-agent
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "pispeedtest.labels" . | nindent 4 }}  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: speedtest-agent
+      {{- include "pispeedtest.selectorLabels" . | nindent 6 }}      
+  template:
+    metadata:
+      labels:
+        k8s-app: speedtest-agent
+        {{- include "pispeedtest.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: speedtest-agent
+          image: "chriskinsman/speedtest-agent:{{ .Chart.AppVersion }}"
+          env:
+            - name: INFLUXDB_HOST
+              value: "influxdb.{{ .Release.Namespace }}"
+            - name: INFLUXDB_DB
+              value: {{ .Values.influxdb.db }}
+            - name: INFLUXDB_USER
+              value: {{ .Values.influxdb.user }}
+            - name: INFLUXDB_USER_PASSWORD
+              value: {{ required "You must specify an influxdb password" .Values.influxdb.password }}

@@ -1,0 +1,16 @@
+{
+  "name": "speedtest-cli",
+  "version": "1.0.0",
+  "description": "Funnels speedtest results to Grafana",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Chris Kinsman",
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "influx": "^5.5.1",
+    "speedtest-net": "^2.1.1"
+  }
+}

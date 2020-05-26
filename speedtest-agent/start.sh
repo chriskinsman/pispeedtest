@@ -1,0 +1,2 @@
+#docker run -d --name=speedtest --network=grafana -e DEBUG=speedtest speedtest:latest
+DEBUG=speedtest* INFLUXDB_HOST=speedtest.local INFLUXDB_DB=grafana INFLUXDB_USER=grafana INFLUXDB_USER_PASSWORD=alsdkff2 node index.js

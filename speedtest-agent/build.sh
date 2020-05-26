@@ -1,0 +1,1 @@
+docker buildx build --platform linux/amd64,linux/arm/v7 --tag chriskinsman/speedtest-agent:1.0.0 --tag chriskinsman/speedtest-agent:latest --push .
