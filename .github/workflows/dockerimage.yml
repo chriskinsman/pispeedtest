@@ -22,5 +22,5 @@ jobs:
       - name: Docker login
         run: docker login --username ${{ secrets.DOCKER_HUB_REGISTRY_USERNAME }} --password ${{ secrets.DOCKER_HUB_REGISTRY_SECRET }}
       - name: Run Buildx
-        run: docker buildx build --platform linux/amd64,linux/arm/v7 --file Dockerfile --tag chriskinsman/speedtest-agent:$GITHUB_RUN_NUMBER --tag chriskinsman/speedtest-agent:latest --output "type=image,push=true" .
+        run: docker buildx build --platform linux/amd64,linux/arm/v7 --file Dockerfile --tag chriskinsman/speedtest-agent:1.0.$GITHUB_RUN_NUMBER --tag chriskinsman/speedtest-agent:latest --output "type=image,push=true" .
         working-directory: speedtest-agent
