@@ -4,7 +4,7 @@ RUN apk add --no-cache make gcc g++ python
 ARG GITHUB_RUN_NUMBER
 
 WORKDIR /speedtest-agent
-COPY index.js package.json package-lock.json /speedtest-agent/
+COPY index.js servers.js package.json package-lock.json /speedtest-agent/
 RUN npm ci --only=production && \
     npm version $GITHUB_RUN_NUMBER
 
