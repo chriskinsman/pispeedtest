@@ -1,9 +1,0 @@
-{{ if ne .Release.Namespace "default" }}
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: {{ .Release.Namespace }}
-  labels:
-    name: {{ .Release.Namespace }}
-    {{- include "pispeedtest.labels" . | nindent 4 }}  
-{{ end }}
