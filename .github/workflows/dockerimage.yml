@@ -1,18 +1,24 @@
 name: speedtest-agent
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
-
-  build:
-
+  buildx:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag chriskinsman/speedtest-agent:$GITHUB_RUN_NUMBER
-      working-directory: speedtest-agent
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Docker buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Run Buildx
+        run: docker buildx build --platform linux/amd64,linux/arm/v7 --file Dockerfile --tag chriskinsman/speedtest-agent:$GITHUB_RUN_NUMBER --output "type=image,push=false" .
+        working-directory: speedtest-agent
