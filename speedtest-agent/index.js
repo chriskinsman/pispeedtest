@@ -80,9 +80,9 @@ async function performTest() {
                         fields: {
                             jitter: measurements.ping.jitter,
                             latency: measurements.ping.latency,
-                            download_bandwidth: measurements.download.bandwidth,
+                            download_bandwidth: measurements.download.bandwidth * 8,
                             download_bytes: measurements.download.bytes,
-                            upload_bandwidth: measurements.upload.bandwidth,
+                            upload_bandwidth: measurements.upload.bandwidth * 8,
                             upload_bytes: measurements.upload.bytes,
                             packet_loss: measurements.packetLoss
                         }
