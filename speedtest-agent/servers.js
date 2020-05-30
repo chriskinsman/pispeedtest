@@ -7,9 +7,9 @@ const _serverPath = '/etc/speedtest-agent/servers.json';
 
 // Default servers
 let _serverList = [
-    { city: 'San Francisco, CA', id: 18531, distance: 683, company: 'Wave' },
-    { city: 'Port Orchard, WA', id: 18532, distance: 29, company: 'Wave' },
-    { city: 'Seattle, WA', id: 8864, distance: 14, company: 'CenturyLink' }
+    // { city: 'San Francisco, CA', id: 18531, distance: 683, company: 'Wave' },
+    // { city: 'Port Orchard, WA', id: 18532, distance: 29, company: 'Wave' },
+    // { city: 'Seattle, WA', id: 8864, distance: 14, company: 'CenturyLink' }
 ];
 
 function readConfig() {

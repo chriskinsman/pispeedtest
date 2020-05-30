@@ -26,13 +26,6 @@ debug(`using hostname: ${_hostname}`);
 // Read the list of servers and start config refresh
 servers.init();
 
-const _defaultServers = [
-    { city: 'San Francisco, CA', id: 18531, distance: 683, company: 'Wave' },
-    { city: 'Port Orchard, WA', id: 18532, distance: 29, company: 'Wave' },
-    { city: 'Seattle, WA', id: 8864, distance: 14, company: 'CenturyLink' }
-    //{ City: 'Woodburn, OR', id: 18533, distance: 177 }
-]
-
 const influx = new Influx.InfluxDB({
     host: process.env.INFLUXDB_HOST,
     database: process.env.INFLUXDB_DB,
@@ -59,47 +52,80 @@ const influx = new Influx.InfluxDB({
     ]
 })
 
-console.log(`Starting interval: ${_interval / 1000} seconds`);
 
-async function performTest() {
+async function testServer(serverId) {
     try {
-        debug('Starting test');
-        for await (const server of servers.list) {
-            try {
-                debug(`Starting ${server.city} (${server.distance} mi)`);
-                const measurements = await speedtest({ acceptLicense: true, serverId: server.id });
-                debug(`Measurements: ${JSON.stringify(measurements)}`);
-                await influx.writePoints([
-                    {
-                        measurement: 'internet_speed',
-                        tags: {
-                            host: _hostname,
-                            server: server.city,
-                            company: server.company
-                        },
-                        fields: {
-                            jitter: measurements.ping.jitter,
-                            latency: measurements.ping.latency,
-                            download_bandwidth: measurements.download.bandwidth * 8,
-                            download_bytes: measurements.download.bytes,
-                            upload_bandwidth: measurements.upload.bandwidth * 8,
-                            upload_bytes: measurements.upload.bytes,
-                            packet_loss: measurements.packetLoss
-                        }
-                    }
-                ]);
-                debug(`Ending ${server.city} (${server.distance} mi)`);
-            }
-            catch (e) {
-                console.error(`Ending ${server.city}(${server.distance} mi)`, e);
-            }
+        const config = {
+            acceptLicense: true
+        };
+
+        if (serverId) {
+            config.serverId = serverId;
         }
-        debug('Test finished');
+
+        const measurements = await speedtest(config);
+        debug(`Measurements: ${JSON.stringify(measurements)}`);
+        await influx.writePoints([
+            {
+                measurement: 'internet_speed',
+                tags: {
+                    host: _hostname,
+                    server: measurements.server.location,
+                    company: measurements.server.name
+                },
+                fields: {
+                    jitter: measurements.ping.jitter,
+                    latency: measurements.ping.latency,
+                    download_bandwidth: measurements.download.bandwidth * 8,
+                    download_bytes: measurements.download.bytes,
+                    upload_bandwidth: measurements.upload.bandwidth * 8,
+                    upload_bytes: measurements.upload.bytes,
+                    packet_loss: measurements.packetLoss
+                }
+            }
+        ]);
     }
-    catch (err) {
-        console.error('Test error: ', err);
+    catch (e) {
+        console.error(`Error testing ${serverId}`, e);
     }
 }
 
-setInterval(performTest, _interval);
-performTest();
+debug(`Starting interval: ${_interval / 1000} seconds`);
+
+async function testServerList() {
+    try {
+        debug('Starting server list test');
+        for await (const server of servers.list) {
+            debug(`Starting ${server.city} (${server.distance} mi)`);
+            await testServer(server.id);
+            debug(`Ending ${server.city} (${server.distance} mi)`);
+        }
+        debug('Ending server list test');
+    }
+    catch (e) {
+        console.error('Server list error: ', e);
+    }
+}
+
+async function testDefaultServer() {
+    try {
+        debug('Starting default server');
+        await testServer();
+        debug('Ending default server');
+    }
+    catch (e) {
+        console.error('Default server error: ', e)
+    }
+}
+
+async function test() {
+    if (servers.list.length === 0) {
+        await testDefaultServer();
+    }
+    else {
+        await testServerList();
+    }
+}
+
+setInterval(test, _interval);
+test();
