@@ -10,7 +10,7 @@ This project combines speedtest-cli for testing with influxdb to store the time 
 
 1. Install Raspbian Lite onto your Raspberry Pi.  Make sure you setup SSH access via an RSA key.
 2. Install k3s.  Easy instructions for installing k3s using k3sup are here: [k3sup]
-(https://github.com/alexellis/k3sup]).
+(https://github.com/alexellis/k3sup).
 3. Make sure kubectl is configured
 4. kubectl create namespace speedtest - Manual step since helm3 has issues with the --namespace flag and creating the namespace
 5. helm install speedtest . --set influxdb.password=<XXXXX> --namespace speedtest
