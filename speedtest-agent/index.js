@@ -23,9 +23,6 @@ debug(`using interval of ${_interval} ms`);
 const _hostname = os.hostname();
 debug(`using hostname: ${_hostname}`);
 
-// Read the list of servers and start config refresh
-servers.init();
-
 const influx = new Influx.InfluxDB({
     host: process.env.INFLUXDB_HOST,
     database: process.env.INFLUXDB_DB,
@@ -92,10 +89,10 @@ async function testServer(serverId) {
 
 debug(`Starting interval: ${_interval / 1000} seconds`);
 
-async function testServerList() {
+async function testServerList(serverList) {
     try {
         debug('Starting server list test');
-        for await (const server of servers.list) {
+        for await (const server of serverList) {
             debug(`Starting ${server.city} (${server.distance} mi)`);
             await testServer(server.id);
             debug(`Ending ${server.city} (${server.distance} mi)`);
@@ -119,14 +116,14 @@ async function testDefaultServer() {
 }
 
 async function test() {
-
-    debug(`Server list: %O`, servers.list);
-    debug(`Length: ${servers.list.length}`);
-    if (servers.list.length === 0) {
+    const serverList = await servers.list();
+    debug(`Server list: %O`, serverList);
+    debug(`Length: ${serverList.length}`);
+    if (serverList.length === 0) {
         await testDefaultServer();
     }
     else {
-        await testServerList();
+        await testServerList(serverList);
     }
 }
 
