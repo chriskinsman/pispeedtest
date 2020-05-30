@@ -64,7 +64,7 @@ async function testServer(serverId) {
         }
 
         const measurements = await speedtest(config);
-        debug(`Measurements: ${JSON.stringify(measurements)}`);
+        debug(`Measurements: %O`, measurements);
         await influx.writePoints([
             {
                 measurement: 'internet_speed',
@@ -119,6 +119,9 @@ async function testDefaultServer() {
 }
 
 async function test() {
+
+    debug(`Server list: %O`, servers.list);
+    debug(`Length: ${servers.list.length}`);
     if (servers.list.length === 0) {
         await testDefaultServer();
     }
