@@ -1,0 +1,13 @@
+{{ if .Values.serverList }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    k8s-app: speedtest-agent
+    {{- include "pispeedtest.labels" . | nindent 4 }}  
+data:
+  servers.json: |-
+{{ .Values.serverList | indent 4 }}
+{{ end }}

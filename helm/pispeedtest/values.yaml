@@ -4,12 +4,17 @@
 
 
 grafana:
-  hostname: "speedtestpi4.local"
+  hostname: 
   path: "/"
 
 influxdb:
+  host:
   db: "grafana"
   user: "grafana"
   password: ""
   
 pvcStorageClass: "local-path"
+
+serverList: 
+
+debug: false

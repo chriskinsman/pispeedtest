@@ -1,3 +1,4 @@
+{{ if .Values.grafana.hostname }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -71,10 +72,11 @@ metadata:
     {{- include "pispeedtest.labels" . | nindent 4 }}  
 spec:
   rules:
-    - host: {{ .Values.grafana.hostname }}
+    - host: {{ required "You must specify a grafana hostname" .Values.grafana.hostname }}
       http:
         paths:
           - path: {{ .Values.grafana.path }}
             backend:
               serviceName: grafana
               servicePort: 3000
+{{ end }}

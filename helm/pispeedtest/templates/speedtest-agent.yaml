@@ -21,11 +21,28 @@ spec:
         - name: speedtest-agent
           image: "chriskinsman/speedtest-agent:{{ .Chart.AppVersion }}"
           env:
+{{ if .Values.debug }}          
+            - name: DEBUG
+              value: speedtest-agent*
+{{ end }}
             - name: INFLUXDB_HOST
+{{ if .Values.influxdb.host }}
+              value: {{ .Values.influxdb.host }}
+{{ else }}
               value: "influxdb.{{ .Release.Namespace }}"
+{{ end }}
             - name: INFLUXDB_DB
-              value: {{ .Values.influxdb.db }}
+              value: {{ required "You must specify an influxdb database" .Values.influxdb.db }}
             - name: INFLUXDB_USER
-              value: {{ .Values.influxdb.user }}
+              value: {{ required "You must specify and influxdb user" .Values.influxdb.user }}
             - name: INFLUXDB_USER_PASSWORD
               value: {{ required "You must specify an influxdb password" .Values.influxdb.password }}
+{{ if .Values.serverList }}            
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/speedtest-agent
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ .Release.Name }}-config
+{{ end }}

@@ -1,7 +1,8 @@
-1. Grafana can be reached at:
+{{ if .Values.grafana.hostname }}
+* Grafana can be reached at:
   http://{{ $.Values.grafana.hostname }}{{ $.Values.grafana.path }}
   Log in as user admin, password admin and immediately change the password
-2. Go into Grafana and add influx db as a data source using:
+* Go into Grafana and add influx db as a data source using:
   http 
     url: http://influxdb.{{ $.Release.Namespace }}:8086
   influxdb details
@@ -9,3 +10,4 @@
     user: {{ .Values.influxdb.user }}
     password: {{ .Values.influxdb.password }}
 3. Optionally import a starter dashboard from dashboard.json
+{{ end }}
